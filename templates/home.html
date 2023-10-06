@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+
+<body>
+    <h1>Submission</h1>
+
+    <form id="myForm">
+        <label for="timecode">Frame:</label>
+        <input type="text" id="frame" name="frame" required><br>
+
+        <label for="item">Video ID:</label>
+        <input type="text" id="item" name="item" required><br>
+
+        <input type="submit" id="submission" value="submission">
+    </form>
+
+    <script>
+        document.getElementById("submission").addEventListener("click", function (event) {
+            event.preventDefault();
+
+            var frameValue = document.getElementById("frame").value;
+            var itemValue = document.getElementById("item").value;
+            var data = {
+                frame: frameValue,
+                item: itemValue
+            };
+
+            fetch("/submission", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data['result']);
+                });
+        });
+
+    </script>
+
+</body>
+
+</html>

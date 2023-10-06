@@ -5,58 +5,43 @@ app = Flask(__name__, template_folder='templates')
 
 # Define the API base URL
 API_BASE_URL = "https://eventretrieval.one/api/v1"
+login_data = {
+    "username": "scienceaio",
+    "password": "OoK9Yimi"
+}
+response = requests.post(f"{API_BASE_URL}/login", json=login_data)
 
-@app.route("/", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
+session_id = None
+if response.status_code == 200:
+    session_id = response.json()['sessionId']
 
-        # Perform login using the LoginAPI
-        login_data = {
-            "username": "scienceaio",
-            "password": "OoK9Yimi"
-        }
-        response = requests.post(f"{API_BASE_URL}/login", json=login_data)
+@app.route("/")
+@app.route("/home")
+def home():
+    return render_template('home.html')
 
-        if response.status_code == 200:
-            # Đăng nhập thành công, trích xuất sessionId từ phản hồi JSON
-            response_json = response.json()
-            session_id = response_json.get("sessionId")
-            
-            return redirect(url_for('dashboard'))
-        else:
-            # Login failed, render an error page or return an error message
-            return "Login failed. Please check your credentials."
-
-    return render_template("login.html")
-
-@app.route("/dashboard", methods=["GET"])
-def dashboard():
-    return render_template("dashboard.html")
-
-@app.route("/submit", methods=["POST"])
-def submit():
-    # Get the session ID, timecode, and item from the form
-    session_id = request.form["session_id"]
-    timecode = request.form["timecode"]
-    item = request.form["item"]
-
-    # Perform the SubmitAPI_with_timecode request
-    params = {
-        "session": session_id,
-        "timecode": timecode,
-        "item": item
-    }
-    response = requests.get(f"{API_BASE_URL}/submit", params=params)
-
+@app.route("/submission", methods=['POST'])
+def submission():
+    submission_data = request.json
     if response.status_code == 200:
-        # Request successful, you can handle the response data here
-        response_data = response.json()
-        return jsonify(response_data)
+        params = {
+            "session": session_id,
+            "frame": submission_data['frame'],
+            "item": submission_data['item']
+        }
+        response_submit = requests.get(f"{API_BASE_URL}/submit", params=params)
+        if response_submit.status_code == 200:
+            result = "Science AIO answer is " + str(response_submit.json()["submission"])
+        else:
+            result = "Duplicated answer"
     else:
-        # Request failed, handle the error accordingly
-        return "Request failed."
+        result = "Login failed: " + str(session_id)
+    
+    data = {
+        'result': result
+    }
+
+    return jsonify(data)
 
 if __name__ == "__main__":
     app.run(debug=True)

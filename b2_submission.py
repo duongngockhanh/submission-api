@@ -11,8 +11,8 @@ response = requests.post(f"{API_BASE_URL}/login", json=login_data)
 
 if response.status_code == 200:
     session_id = response.json()['sessionId']
-    frame = '26980'
-    item = 'L09_V003'
+    frame = '26981'
+    item = 'L09_V007'
 
     # Perform the SubmitAPI_with_timecode request
     params = {
