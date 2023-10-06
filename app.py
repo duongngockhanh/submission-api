@@ -3,11 +3,17 @@ import requests
 
 app = Flask(__name__, template_folder='templates')
 
+# Read account information
+with open("account.txt") as f:
+    accinfo = [item.strip() for item in f.readlines()]
+    acc_username = accinfo[0]
+    acc_password = accinfo[1]
+
 # Define the API base URL
 API_BASE_URL = "https://eventretrieval.one/api/v1"
 login_data = {
-    "username": "scienceaio",
-    "password": "OoK9Yimi"
+    "username": acc_username,
+    "password": acc_password
 }
 response = requests.post(f"{API_BASE_URL}/login", json=login_data)
 
