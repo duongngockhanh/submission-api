@@ -16,10 +16,27 @@
         <label for="item">Video ID:</label>
         <input type="text" id="item" name="item" required><br>
 
+        <!-- <button class="btn_select" onClick="go_submission(${item.id})">SUB</button> -->
         <input type="submit" id="submission" value="Submit">
     </form>
 
     <script>
+        // function go_submission(id) {
+        //     var sc_id = {
+        //         id: id
+        //     }
+        //     fetch("/submission", {
+        //         method: "POST",
+        //         headers: {
+        //             "Content-Type": "application/json"
+        //         },
+        //         body: JSON.stringify(sc_id)
+        //     })
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             alert(data['result']);
+        //         });
+        // }
         document.getElementById("submission").addEventListener("click", function (event) {
             event.preventDefault();
 
